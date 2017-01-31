@@ -202,3 +202,23 @@ test("wrapping JSX", t => {
     t.deepEqual(wrapped, expexted, "wrapped as expected");
     t.end();
 });
+
+test("custom styles", t => {
+    buildRNT({
+        styles: {
+            custom: {
+                backgroundColor: 'blue',
+            },
+            b: {
+                fontWeight: 'bold',
+                color: 'red'
+            }
+        }
+    })
+    /* access a custom style */
+    t.deepEqual(styles.custom, { backgroundColor: 'blue' })
+
+    /* overwrite a builtin style */
+    t.deepEqual(styles.b, { fontWeight: 'bold', color: 'red' })
+    t.end();
+});
