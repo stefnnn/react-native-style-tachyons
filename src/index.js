@@ -3,6 +3,7 @@ import Color from "color";
 import * as reactWrapper from "./reactWrapper";
 import { heights, minHeights, maxHeights } from "./styles/heights"
 import { widths, minWidths, maxWidths } from "./styles/widths"
+import cssColors from "css-color-names"
 import * as borders from "./styles/borders"
 import flexbox from "./styles/flexbox"
 import spacing from "./styles/spacing"
@@ -35,6 +36,8 @@ const NativeTachyons = {
             fonts: {
             },
             styles: {
+            },
+            shortcuts: {
             }
         })
 
@@ -99,7 +102,36 @@ const NativeTachyons = {
 
 
         /* Lastly, add (and overwrite) all custom styles passed through options */
-        _.assign(styleSheet, options.styles)
+        _.assign(styleSheet, options.styles);
+
+        /* Expand shortcuts */
+        _.forEach(options.shortcuts, (value, shortcut) => {
+            const classes = value.split(' ');
+            console.log('shortcut: ', shortcut, value)
+            const style = {}
+            classes.forEach(cls => {
+                console.log('cls: ', cls)
+                /* Expand backgroundColor */
+                if (cls.startsWith("bg-")) {
+                    style.backgroundColor = cls.slice(3);
+                }
+                /* Expand borderColor */
+                else if (cls.startsWith("b--")) {
+                    style.borderColor = cls.slice(3);
+                }
+                /* Expand colorName, rgb, #, hsl */
+                else if (cssColors[cls] || (/^(rgb|#|hsl)/).test(cls)) {
+                    style.color = cls;
+                }
+                /* Expand tachyons styles or styles from options.styles */
+                else {
+                    console.log('expand: ', cls, styleSheet[cls])
+                    _.assign(style, styleSheet[cls])
+                }
+            });
+            styleSheet[shortcut] = style
+            console.log(styleSheet[shortcut])
+        });
 
         _.assign(NativeTachyons.sizes, hyphensToUnderscores(sizes));
         _.assign(NativeTachyons.styles, StyleSheet.create(hyphensToUnderscores(styleSheet)));

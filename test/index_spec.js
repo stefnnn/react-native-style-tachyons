@@ -213,3 +213,28 @@ test("custom styles", t => {
     t.deepEqual(styles.b, { fontWeight: 'bold', color: 'red' })
     t.end();
 });
+
+test("shortcuts", t => {
+    buildRNT({
+        styles: {
+            custom: {
+                backgroundColor: 'blue',
+            },
+        }, 
+        shortcuts: {
+            'title': 'b red',
+            'subtitle': 'b custom',
+            'invert': 'bg-black #fff'
+        }
+    })
+    /* correctly exapands shortcut */
+    t.deepEqual(styles.title, { fontWeight: 'bold', color: 'red' })
+
+    /* shortcuts also can use custom styles */
+    t.deepEqual(styles.subtitle, { fontWeight: 'bold', backgroundColor: 'blue' })
+
+    /* shortcuts also use background colors */
+    t.deepEqual(styles.invert, { backgroundColor: 'black', color: '#fff' })
+    t.end();
+});
+
